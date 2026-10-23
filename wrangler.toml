@@ -1,0 +1,19 @@
+name = "yuhan-csr"
+main = "src/worker.js"
+compatibility_date = "2025-06-01"
+# 대시보드에서 넣은 일반 변수(TURNSTILE_SITE_KEY)를 배포 때 지우지 않음
+keep_vars = true
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "yuhan-csr"
+database_id = "여기에-D1-데이터베이스-ID"
+
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "yuhan-csr-photos"

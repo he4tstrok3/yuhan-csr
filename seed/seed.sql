@@ -1,0 +1,2 @@
+INSERT OR REPLACE INTO programs (id, data, date, updated_at) VALUES ('mbo2o0t7tzx1nno41vmb', '{"title": "안티푸라민 나눔박스 참여 신청", "category": "본사", "date": "2026-10-29", "deadline": "", "time": "", "place": "15층 대회의실", "meeting": "", "bring": "", "desc": "", "capacity": 20, "applyMode": "naver", "formUrl": "https://naver.me/5SKTGLqE", "appliedCount": null, "cover": "", "status": "open", "sample": false, "questions": []}', '2026-10-29', 0);
+INSERT OR REPLACE INTO config (k, v) VALUES ('contact', 'ESG2팀 김지은 사원(0663)');
