@@ -17,3 +17,6 @@ database_id = "4420b436-9607-40ce-a6cb-4f78b375ed22"
 [[r2_buckets]]
 binding = "PHOTOS"
 bucket_name = "yuhan-csr-photos"
+
+[vars]
+TURNSTILE_SITE_KEY = "0x4AAAAAAFhzD9WxuwQq6KaG"
