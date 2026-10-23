@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="symbol.png">
+<title>사회공헌 관리자</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{color-scheme:light;--olive:#5E6A3B;--olive-d:#3F4727;--ink:#1E2618;--slate:#4A5340;--rule:#D7D8CC;--bg:#F3F3EE;
+  --f-sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-sans);font-size:14px;line-height:1.55;word-break:keep-all;overflow-wrap:anywhere;-webkit-font-smoothing:antialiased}
+h1,h2{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--olive);outline-offset:2px}
+img{max-width:100%}
+.num{font-variant-numeric:tabular-nums}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--ink);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.btn:hover{background:var(--ink);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:5px 11px;font-size:13px}
+.btn.fill{background:var(--olive);border-color:var(--olive);color:#fff}
+.btn.fill:hover{background:var(--olive-d)}
+.btn.quiet{border-color:transparent;background:none;color:var(--slate)}
+.btn.quiet:hover{color:var(--ink);text-decoration:underline;background:none}
+.btn.danger{border-color:transparent;background:none;color:#A3322A}
+.btn.danger:hover{text-decoration:underline;background:none;color:#A3322A}
+
+.site{display:inline-flex;align-items:center;background:var(--sc,#6B7062);color:#fff;font-weight:700;font-size:12px;letter-spacing:.04em;padding:2px 9px;border-radius:4px;white-space:nowrap}
+.pill{display:inline-flex;font-size:12px;padding:1px 8px;border:1px dashed #B5B7A8;color:#7A7E70;border-radius:99px;margin-left:6px}
+
+/* gate */
+.gate{min-height:100vh;display:grid;place-content:center;justify-items:center;text-align:center;gap:14px;padding:24px}
+.gate img{width:56px}
+.gate h1{font-size:22px;font-weight:700}
+.gate form{display:grid;gap:10px;width:min(320px,86vw);margin-top:6px}
+.gate p{margin:0;color:var(--slate);font-size:13.5px}
+.gate .err{color:#A3322A;min-height:1.4em}
+
+/* shell */
+.adm{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+.side{background:#2B3220;color:#E6E8DA;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:20px 14px;gap:18px}
+.brand{display:flex;gap:10px;align-items:center;padding:4px 8px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.brand img{width:32px}
+.brand b{display:block;font-size:15px;color:#fff}
+.brand span{font-size:12px;opacity:.7}
+.nav-list{display:grid;gap:2px}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;border:0;background:none;color:inherit;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;text-align:left;text-decoration:none}
+.nav:hover{background:rgba(255,255,255,.08)}
+.nav[aria-current="page"]{background:#fff;color:var(--ink);font-weight:600}
+.nav em{font-style:normal;font-size:12px;background:#B9522F;color:#fff;padding:1px 8px;border-radius:99px}
+.side-foot{margin-top:auto;display:grid;gap:2px}
+.main{padding:28px 32px 80px;min-width:0;max-width:1240px;width:100%}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.head h1{font-size:24px;font-weight:700}
+.head p{margin:4px 0 0;color:var(--slate);font-size:13.5px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.input,.in{border:1px solid var(--rule);background:#fff;border-radius:8px;padding:8px 12px;font-size:14px;min-width:0;color:var(--ink);width:100%}
+.input{width:auto}
+.input:focus,.in:focus{outline:2px solid var(--olive);outline-offset:0;border-color:transparent}
+.input.sm{padding:4px 8px;font-size:13px}
+#q{width:220px}
+textarea.in{resize:vertical;min-height:110px;line-height:1.65}
+.card{background:#fff;border:1px solid #E2E2D8;border-radius:12px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:#FAFAF6;font-size:12px;font-weight:600;color:var(--slate);text-align:left;padding:11px 14px;border-bottom:1px solid #E2E2D8;white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid #EEEEE6;vertical-align:middle;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tr.click{cursor:pointer}
+tr.click:hover td{background:#F7F8F1}
+td b{font-weight:600}
+td small{display:block;color:var(--slate);font-size:12.5px}
+td.wrap{white-space:normal;min-width:240px;max-width:460px}
+td.r{text-align:right}
+.thumb img,.thumb i{display:block;width:44px;height:44px;object-fit:cover;border-radius:6px;background:#E9EAE0;cursor:zoom-in}
+.thumb i{cursor:default}
+.acts{display:inline-flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.muted{color:#8A8E80}
+.st{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;background:#EEEFE7;color:#5B6152;white-space:nowrap}
+.st.ok{background:#E3EED6;color:#3F5A1E}
+.st.warn{background:#FBE5DC;color:#A0401F}
+.prog{display:flex;align-items:center;gap:8px;min-width:140px}
+.bar{flex:1;height:6px;background:#ECEDE4;border-radius:9px;overflow:hidden;max-width:110px}
+.bar i{display:block;height:100%;background:var(--olive)}
+.empty{padding:40px 20px;text-align:center;color:var(--slate)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid #E2E2D8;border-radius:12px;padding:16px 18px;text-align:left;cursor:pointer;display:grid;gap:2px}
+.kpi:hover{border-color:var(--olive)}
+.kpi span{font-size:13px;color:var(--slate)}
+.kpi b{font-size:30px;font-weight:600;line-height:1.3}
+.kpi small{font-size:12px;color:#8A8E80}
+.alert{display:flex;gap:6px 14px;align-items:center;flex-wrap:wrap;background:#FFF6F1;border:1px solid #F3D3C4;border-radius:12px;padding:14px 18px;margin-bottom:8px}
+.alert span{color:#8A4A2E;flex:1;font-size:13.5px}
+.h2{font-size:16px;font-weight:700;margin:28px 0 10px}
+.back{border:0;background:none;color:var(--slate);cursor:pointer;padding:0;font-size:13.5px;margin-bottom:6px;display:block}
+.back:hover{color:var(--ink)}
+.editor{padding:28px;max-width:820px;display:grid;gap:18px}
+.field{display:grid;gap:6px;min-width:0}
+.field>label,.qset legend{font-size:13px;font-weight:600}
+.hint{font-size:12.5px;color:var(--slate);font-weight:400}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}
+.check{display:flex;gap:8px;align-items:center;font-size:14px}
+.qset{border:0;padding:0;margin:0;min-width:0}
+.qset legend{padding:0;margin-bottom:8px}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.segopt{position:relative;cursor:pointer}
+.segopt input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.segopt span{display:block;text-align:center;padding:10px 6px;border:1.5px solid var(--sc);color:var(--sc);font-weight:700;border-radius:8px;background:#fff}
+.segopt input:checked+span{background:var(--sc);color:#fff}
+.segopt input:focus-visible+span{outline:2px solid var(--ink);outline-offset:2px}
+.qbox{display:grid;gap:12px;padding:18px;background:#FAFAF6;border:1px solid #E2E2D8;border-radius:10px}
+.qrow{display:grid;gap:10px;padding:14px;border:1px solid #E2E2D8;background:#fff;border-radius:8px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap}
+.thumbs figure{margin:0;position:relative}
+.thumbs img{width:76px;height:76px;object-fit:cover;border-radius:6px;display:block}
+.thumbs button{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;font-size:13px;line-height:1}
+.filebtn{position:relative;overflow:hidden;justify-self:start}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;align-items:center;padding-top:8px;border-top:1px solid #EEEEE6}
+.clip2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#3B4434}
+.full{white-space:pre-wrap;color:#3B4434}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;z-index:40;max-width:calc(100% - 32px)}
+.lightbox{position:fixed;inset:0;z-index:30;background:rgba(20,26,15,.94);display:grid;place-items:center;padding:16px;cursor:zoom-out}
+.lightbox img{max-height:90vh}
+@media (max-width:900px){
+  .adm{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;height:auto;padding:12px 16px 10px;gap:10px}
+  .brand{padding:0 0 10px}
+  .nav-list{display:flex;overflow-x:auto;gap:4px}
+  .nav{white-space:nowrap;width:auto}
+  .side-foot{display:flex;margin:0;gap:4px}
+  .main{padding:20px 16px 60px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #q{width:100%}
+  .editor{padding:18px}
+}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}.seg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<div id="app"><div class="gate"><p>불러오는 중…</p></div></div>
+<div class="lightbox" id="lightbox" hidden><img id="lb-img" alt=""></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script>
+'use strict';
+/* ---------- constants ---------- */
+const CATS=['본사','연구소','공장','전사'];
+const SITE_COLOR={'본사':'#5E6A3B','연구소':'#35566B','공장':'#8A6A1F','전사':'#B9522F'};
+const QTYPES={text:'짧은 답',long:'긴 답',choice:'하나 선택',multi:'여러 개 선택'};
+const IDEA_ST={new:'접수',review:'검토 중',adopt:'채택',hold:'보류',hidden:'숨김'};
+const STORY_ST={pending:['승인 대기','warn'],approved:['공개','ok'],hidden:['숨김','']};
+const BANNED_Q=/주민|계좌|카드\s*번호|비밀번호|패스워드|여권/;
+const LINK_RE=/(https?:\/\/|www\.|[a-z0-9-]+\.(com|net|org|kr|io|me|ly|co|xyz|site|link)(\/|\b))/i;
+const FORM_HOSTS=['form.naver.com','m.form.naver.com','naver.me'];
+const NAV=[['dash','대시보드'],['programs','봉사 공고'],['archive','활동 기록'],['stories','참여 후기'],['ideas','아이디어'],['settings','사이트 설정'],['logs','관리 기록']];
+const IDLE_MIN=30;
+
+/* ---------- state ---------- */
+const S={authed:false,tab:'dash',q:'',site:'all',status:'all',editing:false,data:null,seen:Date.now()};
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const img=k=>/^[a-f0-9]{32}$/.test(k||'')?'/api/img/'+k:'';
+const siteTag=c=>CATS.includes(c)?`<span class="site" style="--sc:${SITE_COLOR[c]}">${esc(c)}</span>`:'';
+const todayKST=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+const dayBefore=d=>new Date(new Date(d+'T00:00:00Z').getTime()-864e5).toISOString().slice(0,10);
+const WD='일월화수목금토';
+const md=d=>d?`${+d.slice(5,7)}.${+d.slice(8,10)}`:'-';
+const wd=d=>d?WD[new Date(d+'T00:00:00Z').getUTCDay()]:'';
+const fmtTime=t=>{if(!t)return'-';const d=new Date(t+9*3600e3);return `${d.getUTCFullYear()}.${d.getUTCMonth()+1}.${d.getUTCDate()} ${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`};
+const newId=()=>crypto.randomUUID().replace(/-/g,'').slice(0,20);
+const safeForm=u=>{try{const x=new URL(String(u||'').trim());return x.protocol==='https:'&&FORM_HOSTS.includes(x.hostname)}catch(e){return false}};
+const state=p=>{const t=todayKST();if(!p.date||p.date<t)return'past';const dl=p.deadline||dayBefore(p.date);if(p.status==='closed'||dl<t)return'closed';return'open'};
+const stLabel=p=>({open:['모집 중','ok'],closed:['마감',''],past:['종료','']})[state(p)];
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)}
+const armed=new WeakMap();
+function confirmTap(btn,label){if(armed.get(btn))return true;const old=btn.textContent;btn.textContent=label||'한 번 더 누르면 삭제';armed.set(btn,1);setTimeout(()=>{armed.delete(btn);if(btn.isConnected)btn.textContent=old},3000);return false}
+
+/* ---------- api ---------- */
+async function api(path,opt={}){
+  const init={method:opt.method||'GET',headers:{},credentials:'same-origin'};
+  if(opt.body!==undefined){init.headers['Content-Type']='application/json';init.body=JSON.stringify(opt.body)}
+  if(opt.blob){init.headers['Content-Type']=opt.blob.type||'image/jpeg';init.body=opt.blob}
+  let r;try{r=await fetch('/api'+path,init)}catch(e){throw new Error('서버에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.')}
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401&&path!=='/admin/login'&&!opt.quiet){S.authed=false;S.data=null;renderGate('로그인 시간이 끝났어요. 다시 로그인해 주세요.');throw new Error('__silent')}
+  if(!r.ok)throw new Error(j.error||'요청을 처리하지 못했어요.');
+  return j;
+}
+const failMsg=e=>e&&e.message||'문제가 생겼어요.';
+async function load(){S.data=await api('/admin/all')}
+async function refresh(){await load();render()}
+
+/* ---------- uploads ---------- */
+async function shrink(file){
+  if(!/^image\/(jpeg|png|webp|heic|heif)$/i.test(file.type))throw new Error('JPG, PNG, WEBP 사진만 올릴 수 있어요.');
+  if(file.size>30*1024*1024)throw new Error('사진 한 장은 30MB 이하로 골라 주세요.');
+  const url=URL.createObjectURL(file);const im=new Image();
+  await new Promise((r,j)=>{im.onload=r;im.onerror=()=>j(new Error('사진을 읽지 못했어요. JPG나 PNG인지 확인해 주세요.'));im.src=url});
+  const k=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight)),w=Math.round(im.naturalWidth*k),h=Math.round(im.naturalHeight*k);
+  const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);URL.revokeObjectURL(url);
+  return await new Promise((r,j)=>c.toBlob(b=>b?r(b):j(new Error('사진을 변환하지 못했어요.')),'image/jpeg',.86));
+}
+async function uploadAll(files,onStep){const ids=[];let i=0;for(const f of files){onStep&&onStep(++i,files.length);const b=await shrink(f);ids.push((await api('/admin/upload',{method:'POST',blob:b})).id)}return ids}
+
+/* ---------- gate ---------- */
+function renderGate(msg){
+  S.editing=false;
+  $('#app').innerHTML=`<div class="gate"><img src="symbol.png" alt=""><h1>사회공헌 관리자</h1><p>관리자 비밀번호를 입력해 주세요.</p>
+    <form id="login" autocomplete="on"><input type="text" name="username" value="admin" autocomplete="username" hidden>
+    <input class="in" id="pw" type="password" autocomplete="current-password" placeholder="비밀번호" required maxlength="200" aria-label="비밀번호">
+    <button class="btn fill" id="login-btn">로그인</button><p class="err" id="login-err" role="alert">${esc(msg||'')}</p></form>
+    <a class="btn quiet" href="/">직원 화면으로</a></div>`;
+  $('#pw').focus();
+  $('#login').onsubmit=async e=>{e.preventDefault();const b=$('#login-btn');b.disabled=true;$('#login-err').textContent='';
+    try{await api('/admin/login',{method:'POST',body:{password:$('#pw').value}});S.authed=true;S.seen=Date.now();await load();render()}
+    catch(err){$('#login-err').textContent=failMsg(err);$('#pw').select();b.disabled=false}};
+}
+
+/* ---------- shell ---------- */
+function counts(){const d=S.data;return{stories:d.stories.filter(s=>s.status==='pending').length,ideas:d.ideas.filter(i=>i.status==='new').length}}
+const signupsOf=id=>S.data.signups.filter(s=>s.programId===id);
+const getProg=id=>S.data.programs.find(p=>p.id===id);
+const getArch=id=>S.data.archive.find(a=>a.id===id);
+function render(){
+  if(!S.authed||!S.data){renderGate();return}
+  S.editing=false;const c=counts(),badge={stories:c.stories,ideas:c.ideas};
+  const focusQ=document.activeElement&&document.activeElement.id==='q';
+  $('#app').innerHTML=`<div class="adm"><aside class="side">
+    <div class="brand"><img src="symbol.png" alt=""><div><b>함께하는 유한</b><span>사회공헌 관리자</span></div></div>
+    <nav class="nav-list" aria-label="관리 메뉴">${NAV.map(([k,l])=>`<button class="nav" data-act="tab" data-tab="${k}" aria-current="${S.tab===k?'page':'false'}"><span>${l}</span>${badge[k]?`<em>${badge[k]}</em>`:''}</button>`).join('')}</nav>
+    <div class="side-foot"><a class="nav" href="/" target="_blank" rel="noopener"><span>직원 화면 보기 ↗</span></a><button class="nav" data-act="logout"><span>로그아웃</span></button></div>
+  </aside><section class="main" id="main">${body()}</section></div>`;
+  if(focusQ){const i=$('#q');if(i){i.focus();const n=i.value.length;try{i.setSelectionRange(n,n)}catch(e){}}}
+}
+const head=(t,sub,tools)=>`<header class="head"><div><h1>${t}</h1>${sub?`<p>${sub}</p>`:''}</div><div class="tools">${tools||''}</div></header>`;
+const search=ph=>`<input class="input" id="q" type="search" placeholder="${ph}" value="${esc(S.q)}" aria-label="검색">`;
+const siteSel=()=>`<select class="input" id="f-site" aria-label="구분"><option value="all">모든 구분</option>${CATS.map(c=>`<option${S.site===c?' selected':''}>${c}</option>`).join('')}</select>`;
+const table=(h,rows,empty)=>rows.length?`<div class="card tw"><table><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`:`<div class="card empty">${empty}</div>`;
+const barOf=(n,cap)=>cap?`<div class="bar"><i style="width:${Math.min(100,(n||0)/cap*100)}%"></i></div><span class="num">${n??'-'} / ${cap}</span>`:`<span class="num">${n??'-'}${n!=null?'명':''}</span>`;
+const countFor=p=>p.applyMode==='naver'?p.appliedCount:signupsOf(p.id).length;
+const qMatch=(...xs)=>{const q=S.q.trim().toLowerCase();return !q||xs.some(x=>String(x||'').toLowerCase().includes(q))};
+const sample=x=>x.sample?'<span class="pill">예시</span>':'';
+
+function body(){
+  const d=S.data,t=S.tab;
+  if(t==='dash'){
+    const open=d.programs.filter(p=>state(p)==='open'),up=d.programs.filter(p=>state(p)!=='past').sort((a,b)=>a.date<b.date?-1:1);
+    const siteN=up.filter(p=>p.applyMode!=='naver').reduce((n,p)=>n+signupsOf(p.id).length,0),c=counts();
+    const ex=d.programs.filter(x=>x.sample).length+d.archive.filter(x=>x.sample).length;
+    const kpi=(l,v,sub,k)=>`<button class="kpi" data-act="tab" data-tab="${k}"><span>${l}</span><b class="num">${v}</b><small>${sub}</small></button>`;
+    return head('대시보드','',`<button class="btn fill" data-act="newProg">새 공고</button>`)+
+    `<div class="kpis">${kpi('모집 중 공고',open.length,'신청을 받는 중','programs')}${kpi('사이트 신청자',siteN,'진행 예정 공고 합계','programs')}${kpi('승인 대기 후기',c.stories,'확인 후 공개','stories')}${kpi('새 제안',c.ideas,'상태가 ‘접수’인 제안','ideas')}</div>
+    ${c.stories?`<div class="alert"><b>승인을 기다리는 후기가 ${c.stories}개 있어요</b><span>승인하기 전에는 직원 화면에 보이지 않아요.</span><button class="btn sm" data-act="tab" data-tab="stories">후기 확인</button></div>`:''}
+    ${ex?`<div class="alert"><b>예시 데이터 ${ex}건이 남아 있어요</b><span>실제 운영 전에 지워 주세요.</span><button class="btn sm" data-act="clearSamples">예시 지우기</button></div>`:''}
+    <h2 class="h2">다가오는 봉사</h2>
+    ${table(['구분','활동','활동일','상태','신청 현황',''],up.slice(0,8).map(p=>{const s=stLabel(p);return `<tr class="click" data-act="editProg" data-id="${esc(p.id)}"><td>${siteTag(p.category)}</td><td><b>${esc(p.title)}</b>${sample(p)}</td><td class="num">${md(p.date)} (${wd(p.date)})</td><td><span class="st ${s[1]}">${s[0]}</span></td><td><div class="prog">${barOf(countFor(p),+p.capacity||0)}</div></td><td class="r">${p.applyMode!=='naver'?`<button class="btn sm" data-act="applicants" data-id="${esc(p.id)}">명단</button>`:'<span class="muted">네이버폼</span>'}</td></tr>`}),'예정된 봉사가 없어요. 오른쪽 위 ‘새 공고’로 등록해 주세요.')}
+    <h2 class="h2">최근 관리 기록</h2>
+    ${logTable(d.logs.slice(0,6))}`;
+  }
+  if(t==='programs'){
+    const list=d.programs.filter(p=>(S.site==='all'||p.category===S.site)&&(S.status==='all'||state(p)===S.status)&&qMatch(p.title,p.place)).sort((a,b)=>a.date<b.date?1:-1);
+    return head('봉사 공고',`전체 ${d.programs.length}건`,search('활동명·장소 검색')+siteSel()+
+      `<select class="input" id="f-status" aria-label="상태">${[['all','모든 상태'],['open','모집 중'],['closed','마감'],['past','종료']].map(([k,l])=>`<option value="${k}"${S.status===k?' selected':''}>${l}</option>`).join('')}</select><button class="btn fill" data-act="newProg">새 공고</button>`)+
+    table(['구분','활동','활동일','상태','신청 현황','신청 방법',''],list.map(p=>{const s=stLabel(p),site=p.applyMode!=='naver';
+      return `<tr class="click" data-act="editProg" data-id="${esc(p.id)}"><td>${siteTag(p.category)}</td><td><b>${esc(p.title)}</b>${sample(p)}<small>${esc(p.place||'')}</small></td><td class="num">${md(p.date)} (${wd(p.date)})</td><td><span class="st ${s[1]}">${s[0]}</span></td><td><div class="prog">${barOf(countFor(p),+p.capacity||0)}</div></td><td>${site?`사이트 · 문항 ${(p.questions||[]).length}`:'네이버폼'}</td>
+      <td class="r"><div class="acts">${site?`<button class="btn sm" data-act="applicants" data-id="${esc(p.id)}">명단</button>`:''}${state(p)==='past'?`<button class="btn sm" data-act="toArchive" data-id="${esc(p.id)}">기록으로</button>`:''}</div></td></tr>`}),S.q||S.site!=='all'||S.status!=='all'?'조건에 맞는 공고가 없어요':'등록된 공고가 없어요');
+  }
+  if(t==='archive'){
+    const list=d.archive.filter(a=>(S.site==='all'||a.category===S.site)&&qMatch(a.title,a.place));
+    return head('활동 기록',`전체 ${d.archive.length}건`,search('활동명·장소 검색')+siteSel()+`<button class="btn fill" data-act="newArch">기록 추가</button>`)+
+    table(['','구분','활동','활동일','사진','후기'],list.map(a=>{const ph=a.photos||[];
+      return `<tr class="click" data-act="editArch" data-id="${esc(a.id)}"><td class="thumb">${ph[0]?`<img src="${img(ph[0])}" alt="" loading="lazy">`:'<i></i>'}</td><td>${siteTag(a.category)}</td><td><b>${esc(a.title)}</b>${sample(a)}<small>${esc(a.place||'')}</small></td><td class="num">${esc((a.date||'').replace(/-/g,'.'))}</td><td class="num">${ph.length}장</td><td class="num">${d.stories.filter(s=>s.archiveId===a.id&&s.status==='approved').length}</td></tr>`}),'활동 기록이 없어요');
+  }
+  if(t==='stories'){
+    const f=S.status==='all'?'':S.status;
+    const list=d.stories.filter(s=>(!f||s.status===f)&&qMatch(s.text,s.author));
+    return head('참여 후기','직원이 올린 후기는 승인해야 공개돼요.',search('내용·작성자 검색')+
+      `<select class="input" id="f-status" aria-label="상태">${[['all','모든 상태'],['pending','승인 대기'],['approved','공개'],['hidden','숨김']].map(([k,l])=>`<option value="${k}"${S.status===k?' selected':''}>${l}</option>`).join('')}</select>`)+
+    table(['','후기','작성자','활동','작성','상태',''],list.map(s=>{const a=getArch(s.archiveId),st=STORY_ST[s.status]||STORY_ST.pending;
+      return `<tr><td class="thumb">${s.photos[0]?`<img src="${img(s.photos[0])}" alt="" data-act="zoom" loading="lazy">`:'<i></i>'}${s.photos.length>1?`<small class="muted">+${s.photos.length-1}</small>`:''}</td>
+      <td class="wrap"><span class="full">${esc(s.text)}</span>${LINK_RE.test(s.text)?' <span class="st warn">링크 포함</span>':''}</td><td>${esc(s.author||'익명')}</td><td>${a?esc(a.title):'<span class="muted">-</span>'}</td><td class="num muted">${fmtTime(s.at)}</td><td><span class="st ${st[1]}">${st[0]}</span></td>
+      <td class="r"><div class="acts">${s.status!=='approved'?`<button class="btn sm fill" data-act="storySt" data-st="approved" data-id="${esc(s.id)}">승인</button>`:''}${s.status!=='hidden'?`<button class="btn sm" data-act="storySt" data-st="hidden" data-id="${esc(s.id)}">숨김</button>`:''}<button class="btn sm danger" data-act="delStory" data-id="${esc(s.id)}">삭제</button></div></td></tr>`}),'후기가 없어요');
+  }
+  if(t==='ideas'){
+    const list=d.ideas.filter(i=>(S.site==='all'||i.category===S.site)&&qMatch(i.title,i.desc,i.author)).sort((a,b)=>b.votes-a.votes||b.at-a.at);
+    return head('아이디어',`전체 ${d.ideas.length}건 · 공감 많은 순`,search('제목·내용 검색')+siteSel())+
+    table(['공감','제안','구분','작성자','작성','상태',''],list.map(i=>`<tr><td class="num"><b>${i.votes}</b></td><td class="wrap"><b>${esc(i.title)}</b>${i.desc?`<span class="clip2">${esc(i.desc)}</span>`:''}</td><td>${siteTag(i.category)}</td><td>${esc(i.author||'익명')}</td><td class="num muted">${fmtTime(i.at)}</td>
+      <td><select class="input sm" data-act="ideaSt" data-id="${esc(i.id)}" aria-label="진행 상태">${Object.entries(IDEA_ST).map(([k,v])=>`<option value="${k}"${i.status===k?' selected':''}>${v}</option>`).join('')}</select></td>
+      <td class="r"><button class="btn sm danger" data-act="delIdea" data-id="${esc(i.id)}">삭제</button></td></tr>`),'제안이 없어요');
+  }
+  if(t==='settings'){
+    return head('사이트 설정','','')+`<form class="card editor" id="cfg">
+      <div class="field"><label for="cfg-contact">푸터 문의처</label><input class="in" id="cfg-contact" maxlength="80" value="${esc(d.config.contact)}" placeholder="예: ESG2팀 김지은 사원(0663)"></div>
+      <div class="foot"><button class="btn fill" id="cfg-save">저장</button></div></form>
+      <h2 class="h2">로그인 정보</h2><div class="card editor"><p style="margin:0">로그인은 ${IDLE_MIN}분 동안 아무 작업이 없거나 8시간이 지나면 자동으로 끝나요. 비밀번호는 Cloudflare Worker 설정의 <b>ADMIN_PASSWORD</b>에서 바꿀 수 있어요.</p></div>`;
+  }
+  if(t==='logs')return head('관리 기록','최근 200건','')+logTable(d.logs);
+  return '';
+}
+function logTable(logs){return table(['시각','작업','대상'],logs.map(l=>`<tr><td class="num muted">${fmtTime(l.at)}</td><td>${l.action.includes('실패')?`<span class="st warn">${esc(l.action)}</span>`:esc(l.action)}</td><td class="wrap">${esc(l.target||'')}</td></tr>`),'기록이 없어요')}
+
+/* ---------- editor panel ---------- */
+function openPanel(title,html){S.editing=true;$('#main').innerHTML=`<header class="head"><div><button class="back" data-act="back">← 목록으로</button><h1>${esc(title)}</h1></div></header>${html}`;window.scrollTo({top:0})}
+function closePanel(){S.editing=false;render()}
+const segSites=(name,cur)=>{cur=CATS.includes(cur)?cur:CATS[0];return `<fieldset class="field qset"><legend>구분</legend><div class="seg">${CATS.map(c=>`<label class="segopt" style="--sc:${SITE_COLOR[c]}"><input type="radio" name="${name}" value="${c}"${cur===c?' checked':''}><span>${c}</span></label>`).join('')}</div></fieldset>`};
+const pickSite=name=>{const v=document.querySelector(`input[name="${name}"]:checked`)?.value;return CATS.includes(v)?v:CATS[0]};
+function thumbs(el,items,onRemove){el.replaceChildren(...items.map((src,i)=>{const f=document.createElement('figure');const im=document.createElement('img');im.src=src;im.alt='';const b=document.createElement('button');b.type='button';b.textContent='×';b.setAttribute('aria-label','사진 빼기');b.onclick=()=>onRemove(i);f.append(im,b);return f}))}
+
+function progForm(p){
+  p=p||{category:CATS[0],capacity:20,applyMode:'site',questions:[]};const id=p.id||newId();const editing=!!p.id;
+  let cover=p.cover||'',file=null;const n=editing?signupsOf(p.id).length:0;
+  openPanel(editing?'봉사 공고 수정':'새 봉사 공고',`<form class="card editor" id="pf" novalidate>
+    ${segSites('pf-site',p.category)}
+    <div class="field"><label for="pf-title">활동명</label><input class="in" id="pf-title" required maxlength="60" value="${esc(p.title)}"></div>
+    <fieldset class="field qset"><legend>신청 방법</legend><div class="row" style="gap:24px">
+      <label class="check"><input type="radio" name="pf-mode" value="site"${p.applyMode!=='naver'?' checked':''}> 사이트에서 바로 신청받기</label>
+      <label class="check"><input type="radio" name="pf-mode" value="naver"${p.applyMode==='naver'?' checked':''}> 네이버폼으로 연결</label></div></fieldset>
+    <div id="pf-site-box" class="qbox"><b style="font-weight:600">신청서 문항</b>
+      <p class="hint" style="margin:0">소속·이름·사번은 항상 받아요. 여기에는 추가로 물을 것만 넣어 주세요.${n?` 이미 ${n}명이 신청했어요. 문항을 지우면 그 답은 명단에서 빠져요.`:''}</p>
+      <div id="pf-qs" style="display:grid;gap:12px"></div>
+      <button type="button" class="btn sm" id="pf-addq" style="justify-self:start">+ 문항 추가</button></div>
+    <div id="pf-naver-box" class="qbox"><div class="field"><label for="pf-form">네이버폼 신청 링크</label><input class="in" id="pf-form" type="url" placeholder="https://naver.me/..." value="${esc(p.formUrl)}"></div>
+      <div class="field"><label for="pf-cnt">현재 신청 인원 <span class="hint">선택 · 직원 화면에 표시</span></label><input class="in" type="number" min="0" id="pf-cnt" value="${esc(p.appliedCount??'')}"></div></div>
+    <div class="grid2"><div class="field"><label for="pf-date">활동일</label><input class="in" type="date" id="pf-date" required value="${esc(p.date)}"></div>
+      <div class="field"><label for="pf-time">시간</label><input class="in" id="pf-time" placeholder="09:00–13:00" maxlength="30" value="${esc(p.time)}"></div></div>
+    <div class="grid2"><div class="field"><label for="pf-place">장소</label><input class="in" id="pf-place" maxlength="60" value="${esc(p.place)}"></div>
+      <div class="field"><label for="pf-meet">집결 장소 <span class="hint">선택</span></label><input class="in" id="pf-meet" maxlength="60" value="${esc(p.meeting)}"></div></div>
+    <div class="grid2"><div class="field"><label for="pf-cap">정원 <span class="hint">0이면 제한 없음</span></label><input class="in" type="number" min="0" id="pf-cap" value="${esc(p.capacity)}"></div>
+      <div class="field"><label for="pf-dl">신청 마감일 <span class="hint">비우면 활동 전날</span></label><input class="in" type="date" id="pf-dl" value="${esc(p.deadline)}"></div></div>
+    <div class="field"><label for="pf-bring">준비물 <span class="hint">선택</span></label><input class="in" id="pf-bring" maxlength="80" value="${esc(p.bring)}"></div>
+    <div class="field"><label for="pf-desc">소개</label><textarea class="in" id="pf-desc" maxlength="800">${esc(p.desc)}</textarea></div>
+    <div class="field"><label>대표 사진</label><div class="thumbs" id="pf-thumb"></div><label class="btn sm filebtn">사진 선택<input type="file" id="pf-file" accept="image/jpeg,image/png,image/webp,image/heic"></label></div>
+    ${editing?`<label class="check"><input type="checkbox" id="pf-closed"${p.status==='closed'?' checked':''}> 모집 조기 마감</label>`:''}
+    <div class="foot">${editing?`<button type="button" class="btn danger" data-act="delProg" data-id="${esc(p.id)}" style="margin-right:auto">공고 삭제</button>`:''}<button type="button" class="btn quiet" data-act="back">취소</button><button class="btn fill" id="pf-submit">${editing?'저장':'등록'}</button></div></form>`);
+  const draw=()=>{const src=file?URL.createObjectURL(file):img(cover);thumbs($('#pf-thumb'),src?[src]:[],()=>{file=null;cover='';draw()})};draw();
+  const fi=$('#pf-file');fi.onchange=()=>{if(fi.files[0])file=fi.files[0];fi.value='';draw()};
+  let qs=(p.questions||[]).map(q=>({...q,options:[...(q.options||[])]}));
+  const box=$('#pf-qs');
+  const sync=()=>box.querySelectorAll('.qrow').forEach((r,i)=>{const q=qs[i];if(!q)return;q.label=r.querySelector('[data-k=label]').value;q.type=r.querySelector('[data-k=type]').value;
+    q.options=r.querySelector('[data-k=options]').value.split(',').map(x=>x.trim()).filter(Boolean).slice(0,10);q.required=r.querySelector('[data-k=required]').checked});
+  const drawQ=()=>{box.innerHTML=qs.length?qs.map((q,i)=>`<div class="qrow"><div class="grid2"><div class="field"><label for="q-${i}-l">문항 ${i+1}</label><input class="in" id="q-${i}-l" data-k="label" maxlength="60" placeholder="예: 차량 지원이 필요한가요?" value="${esc(q.label)}"></div>
+      <div class="field"><label for="q-${i}-t">답변 형식</label><select class="in" id="q-${i}-t" data-k="type">${Object.entries(QTYPES).map(([k,l])=>`<option value="${k}"${q.type===k?' selected':''}>${l}</option>`).join('')}</select></div></div>
+      <div class="field"${q.type==='choice'||q.type==='multi'?'':' hidden'}><label for="q-${i}-o">선택지 <span class="hint">쉼표로 구분</span></label><input class="in" id="q-${i}-o" data-k="options" placeholder="예: 필요해요, 필요 없어요" value="${esc(q.options.join(', '))}"></div>
+      <div class="row" style="justify-content:space-between"><label class="check"><input type="checkbox" data-k="required"${q.required?' checked':''}> 필수</label>
+      <span>${i?`<button type="button" class="btn sm quiet" data-q="up" data-i="${i}">위로</button>`:''}<button type="button" class="btn sm danger" data-q="del" data-i="${i}">문항 삭제</button></span></div></div>`).join('')
+      :'<p class="hint" style="margin:0">추가 문항 없음</p>'};
+  drawQ();
+  box.addEventListener('change',e=>{if(e.target.matches('[data-k=type]')){sync();drawQ()}});
+  box.addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b)return;sync();const i=+b.dataset.i;if(b.dataset.q==='del')qs.splice(i,1);else if(i>0)[qs[i-1],qs[i]]=[qs[i],qs[i-1]];drawQ()});
+  $('#pf-addq').onclick=()=>{sync();if(qs.length>=15){toast('문항은 15개까지 만들 수 있어요');return}qs.push({id:newId().slice(0,12),label:'',type:'text',required:false,options:[]});drawQ();box.querySelector('.qrow:last-child input')?.focus()};
+  const modeSync=()=>{const m=document.querySelector('input[name=pf-mode]:checked')?.value||'site';$('#pf-site-box').hidden=m!=='site';$('#pf-naver-box').hidden=m!=='naver'};
+  document.querySelectorAll('input[name=pf-mode]').forEach(r=>r.onchange=modeSync);modeSync();
+  $('#pf').onsubmit=async e=>{e.preventDefault();const v=k=>$('#'+k).value.trim();
+    const mode=document.querySelector('input[name=pf-mode]:checked')?.value==='naver'?'naver':'site';
+    if(!v('pf-title')){toast('활동명을 적어 주세요');$('#pf-title').focus();return}
+    if(!v('pf-date')){toast('활동일을 골라 주세요');$('#pf-date').focus();return}
+    if(mode==='naver'&&!safeForm(v('pf-form'))){toast('네이버폼 주소(form.naver.com 또는 naver.me)를 넣어 주세요');$('#pf-form').focus();return}
+    let questions=[];
+    if(mode==='site'){sync();questions=qs.map(q=>({id:q.id,label:q.label.trim(),type:q.type,required:!!q.required,options:(q.type==='choice'||q.type==='multi')?q.options:[]})).filter(q=>q.label);
+      const bad=questions.find(q=>BANNED_Q.test(q.label));if(bad){toast(`‘${bad.label}’ 같은 민감한 정보는 물을 수 없어요`);return}
+      const few=questions.find(q=>(q.type==='choice'||q.type==='multi')&&q.options.length<2);if(few){toast(`‘${few.label}’에 선택지를 2개 이상 넣어 주세요`);return}}
+    const btn=$('#pf-submit');btn.disabled=true;
+    try{const up=file?(await uploadAll([file]))[0]:cover;const cnt=v('pf-cnt');
+      await api('/admin/programs/'+encodeURIComponent(id),{method:'PUT',body:{title:v('pf-title'),applyMode:mode,formUrl:mode==='naver'?v('pf-form'):'',questions,category:pickSite('pf-site'),date:v('pf-date'),time:v('pf-time'),place:v('pf-place'),meeting:v('pf-meet'),
+        capacity:+v('pf-cap')||0,appliedCount:mode==='naver'&&cnt!==''?+cnt:null,deadline:v('pf-dl'),bring:v('pf-bring'),desc:v('pf-desc'),cover:up||'',status:$('#pf-closed')?.checked?'closed':'open',sample:false}});
+      toast(editing?'저장했어요':'공고를 올렸어요');S.tab=S.tab==='dash'?'dash':'programs';await refresh()}
+    catch(err){if(err.message!=='__silent')toast(failMsg(err));btn.disabled=false}};
+}
+
+function archForm(a,fromProg){
+  a=a||{category:CATS[0]};const id=a.id||newId();let photos=[...(a.photos||[])],files=[];
+  openPanel(fromProg?'활동 기록으로 옮기기':a.id?'활동 기록 수정':'새 활동 기록',`<form class="card editor" id="af" novalidate>
+    ${fromProg?`<p class="hint" style="margin:0">저장하면 공고는 지워지고 활동 기록으로 남아요. 신청자 명단도 함께 지워지니 필요하면 먼저 명단을 내려받아 주세요.</p>`:''}
+    ${segSites('af-site',a.category)}
+    <div class="field"><label for="af-title">활동명</label><input class="in" id="af-title" required maxlength="60" value="${esc(a.title)}"></div>
+    <div class="grid2"><div class="field"><label for="af-date">활동일</label><input class="in" type="date" id="af-date" required value="${esc(a.date)}"></div>
+      <div class="field"><label for="af-place">장소</label><input class="in" id="af-place" maxlength="60" value="${esc(a.place)}"></div></div>
+    <div class="field"><label for="af-ppl">참여 인원</label><input class="in" type="number" min="0" id="af-ppl" value="${esc(a.participants)}"></div>
+    <div class="field"><label for="af-sum">활동 내용</label><textarea class="in" id="af-sum" maxlength="1200" placeholder="예: 연탄 1,200장 배달, 12가구">${esc(a.summary)}</textarea></div>
+    <div class="field"><label>사진 <span class="hint">최대 30장 · 첫 사진이 대표</span></label><div class="thumbs" id="af-thumbs"></div>
+      <label class="check"><input type="checkbox" id="af-consent"> 새 사진 속 사람들에게 게시 동의를 받았고, 아동·수혜자의 얼굴은 알아볼 수 없어요</label>
+      <label class="btn sm filebtn">사진 추가<input type="file" id="af-files" accept="image/jpeg,image/png,image/webp,image/heic" multiple></label></div>
+    <div class="foot">${a.id?`<button type="button" class="btn danger" data-act="delArch" data-id="${esc(a.id)}" style="margin-right:auto">기록 삭제</button>`:''}<button type="button" class="btn quiet" data-act="back">취소</button><button class="btn fill" id="af-submit">${a.id?'저장':fromProg?'옮기기':'기록 추가'}</button></div></form>`);
+  const draw=()=>thumbs($('#af-thumbs'),[...photos.map(img),...files.map(f=>URL.createObjectURL(f))],i=>{if(i<photos.length)photos.splice(i,1);else files.splice(i-photos.length,1);draw()});draw();
+  const fi=$('#af-files');fi.onchange=()=>{files=[...files,...fi.files].slice(0,Math.max(0,30-photos.length));fi.value='';draw()};
+  $('#af').onsubmit=async e=>{e.preventDefault();const v=k=>$('#'+k).value.trim();
+    if(!v('af-title')){toast('활동명을 적어 주세요');return}if(!v('af-date')){toast('활동일을 골라 주세요');return}
+    if(files.length&&!$('#af-consent').checked){toast('새 사진을 올리려면 게시 동의 항목을 확인해 주세요');return}
+    const btn=$('#af-submit');btn.disabled=true;
+    try{const up=await uploadAll(files,(i,n)=>btn.textContent=`사진 올리는 중 ${i}/${n}`);btn.textContent='저장 중…';
+      await api('/admin/archive/'+encodeURIComponent(id),{method:'PUT',body:{title:v('af-title'),date:v('af-date'),category:pickSite('af-site'),place:v('af-place'),participants:+v('af-ppl')||0,summary:v('af-sum'),photos:[...photos,...up],sample:false}});
+      if(fromProg)await api('/admin/programs/'+encodeURIComponent(fromProg),{method:'DELETE'});
+      toast(fromProg?'활동 기록으로 옮겼어요':'저장했어요');S.tab='archive';await refresh()}
+    catch(err){if(err.message!=='__silent')toast(failMsg(err));btn.disabled=false;btn.textContent='다시 시도'}};
+}
+
+const ansText=v=>Array.isArray(v)?v.join(', '):String(v??'');
+function applicantsView(p){
+  const list=signupsOf(p.id),cap=+p.capacity||0,qs=p.questions||[];
+  openPanel(`신청자 · ${p.title}`,`<p style="margin:0 0 14px;color:var(--slate)">${siteTag(p.category)} ${md(p.date)} (${wd(p.date)}) · 신청 ${list.length}명${cap?` · 정원 ${cap} · 대기 ${Math.max(0,list.length-cap)}`:''}</p>
+    ${table(['#','이름','소속','사번','상태',...qs.map(q=>esc(q.label)),'신청 시각',''],list.map((a,i)=>`<tr><td class="num">${i+1}</td><td>${esc(a.name)}</td><td>${esc(a.org)}</td><td class="num">${esc(a.empNo)}</td><td><span class="st ${!cap||i<cap?'ok':'warn'}">${!cap||i<cap?'확정':'대기 '+(i-cap+1)}</span></td>${qs.map(q=>`<td class="wrap" style="min-width:140px">${esc(ansText(a.answers[q.id]))}</td>`).join('')}<td class="num muted">${fmtTime(a.at)}</td><td class="r"><button class="btn sm danger" data-act="delSignup" data-id="${esc(a.id)}" data-pid="${esc(p.id)}">삭제</button></td></tr>`),'아직 신청자가 없어요')}
+    <div class="row" style="margin-top:14px;justify-content:flex-end">${list.length?`<button class="btn" data-act="csv" data-id="${esc(p.id)}">엑셀(CSV) 내려받기</button>`:''}<button class="btn quiet" data-act="back">목록으로</button></div>`);
+}
+function downloadCsv(p){
+  const list=signupsOf(p.id),cap=+p.capacity||0,qs=p.questions||[];
+  const cell=t=>{let s=String(t??'').replace(/[\r\n]+/g,' ');if(/^[=+\-@\t]/.test(s))s="'"+s;return /[",]/.test(s)?`"${s.replace(/"/g,'""')}"`:s};
+  const rows=[['순번','이름','소속','사번','상태',...qs.map(q=>q.label),'신청 시각'],...list.map((a,i)=>[i+1,a.name,a.org,a.empNo,!cap||i<cap?'확정':'대기',...qs.map(q=>ansText(a.answers[q.id])),fmtTime(a.at)])];
+  const blob=new Blob(['﻿'+rows.map(r=>r.map(cell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`신청자_${p.date}_${p.title.replace(/[\\/:*?"<>|]/g,'')}.csv`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+
+/* ---------- actions ---------- */
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-act]');if(!b||b.tagName==='SELECT')return;
+  const act=b.dataset.act,id=b.dataset.id;
+  try{switch(act){
+    case'tab':S.tab=b.dataset.tab;S.q='';S.site='all';S.status='all';render();window.scrollTo({top:0});await load();if(!S.editing)render();break;
+    case'back':closePanel();break;
+    case'logout':await api('/admin/logout',{method:'POST'}).catch(()=>{});S.authed=false;S.data=null;renderGate('로그아웃했어요.');break;
+    case'zoom':$('#lb-img').src=b.src;$('#lightbox').hidden=false;break;
+    case'newProg':progForm();break;
+    case'editProg':{const p=getProg(id);if(p)progForm(p);break}
+    case'applicants':{e.stopPropagation();const p=getProg(id);if(p)applicantsView(p);break}
+    case'csv':{const p=getProg(id);if(p)downloadCsv(p);break}
+    case'toArchive':{e.stopPropagation();const p=getProg(id);if(!p)break;const n=countFor(p)||0,cap=+p.capacity||0;
+      archForm({title:p.title,date:p.date,category:p.category,place:p.place,participants:cap?Math.min(n,cap):n,summary:'',photos:p.cover?[p.cover]:[]},id);break}
+    case'delProg':{if(!confirmTap(b,'한 번 더 누르면 삭제 (신청자 명단도 지워져요)'))return;await api('/admin/programs/'+encodeURIComponent(id),{method:'DELETE'});toast('공고를 삭제했어요');await refresh();break}
+    case'newArch':archForm();break;
+    case'editArch':{const a=getArch(id);if(a)archForm(a);break}
+    case'delArch':{if(!confirmTap(b))return;await api('/admin/archive/'+encodeURIComponent(id),{method:'DELETE'});toast('기록을 삭제했어요');await refresh();break}
+    case'storySt':{b.disabled=true;await api('/admin/stories/'+encodeURIComponent(id),{method:'PATCH',body:{status:b.dataset.st}});toast(b.dataset.st==='approved'?'후기를 공개했어요':'후기를 숨겼어요');await refresh();break}
+    case'delStory':{if(!confirmTap(b))return;await api('/admin/stories/'+encodeURIComponent(id),{method:'DELETE'});toast('후기와 사진을 삭제했어요');await refresh();break}
+    case'delIdea':{if(!confirmTap(b))return;await api('/admin/ideas/'+encodeURIComponent(id),{method:'DELETE'});toast('제안을 삭제했어요');await refresh();break}
+    case'delSignup':{if(!confirmTap(b))return;await api('/admin/signups/'+encodeURIComponent(id),{method:'DELETE'});toast('신청을 삭제했어요');await load();const p=getProg(b.dataset.pid);if(p)applicantsView(p);else closePanel();break}
+    case'clearSamples':{if(!confirmTap(b,'한 번 더 누르면 예시 삭제'))return;b.disabled=true;
+      for(const p of S.data.programs.filter(x=>x.sample))await api('/admin/programs/'+encodeURIComponent(p.id),{method:'DELETE'});
+      for(const a of S.data.archive.filter(x=>x.sample))await api('/admin/archive/'+encodeURIComponent(a.id),{method:'DELETE'});
+      toast('예시 데이터를 지웠어요');await refresh();break}
+  }}catch(err){if(err.message!=='__silent')toast(failMsg(err));if(b.isConnected)b.disabled=false}
+});
+document.addEventListener('input',e=>{if(e.target.id==='q'){S.q=e.target.value;render()}});
+document.addEventListener('change',async e=>{const t=e.target;
+  if(t.id==='f-site'){S.site=t.value;render();return}
+  if(t.id==='f-status'){S.status=t.value;render();return}
+  if(t.matches('select[data-act=ideaSt]')){try{await api('/admin/ideas/'+encodeURIComponent(t.dataset.id),{method:'PATCH',body:{status:t.value}});toast('상태를 바꿨어요');await load()}catch(err){if(err.message!=='__silent')toast(failMsg(err))}}
+});
+document.addEventListener('submit',async e=>{if(e.target.id!=='cfg')return;e.preventDefault();const b=$('#cfg-save');b.disabled=true;
+  try{await api('/admin/config',{method:'PUT',body:{contact:$('#cfg-contact').value.trim()}});toast('저장했어요');await load()}catch(err){if(err.message!=='__silent')toast(failMsg(err))}b.disabled=false});
+$('#lightbox').onclick=()=>$('#lightbox').hidden=true;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#lightbox').hidden)$('#lightbox').hidden=true;else if(S.editing&&!e.target.matches('input,textarea,select'))closePanel()}});
+
+/* idle logout */
+['click','keydown','scroll','touchstart'].forEach(ev=>addEventListener(ev,()=>{S.seen=Date.now()},{passive:true}));
+setInterval(async()=>{if(S.authed&&Date.now()-S.seen>IDLE_MIN*60e3){await api('/admin/logout',{method:'POST'}).catch(()=>{});S.authed=false;S.data=null;renderGate(`${IDLE_MIN}분 동안 사용이 없어 로그아웃했어요.`)}},30000);
+
+/* start */
+(async()=>{try{await api('/admin/session',{quiet:true});S.authed=true;await load();render()}catch(e){if(e.message!=='__silent')renderGate()}})();
+</script>
+</body>
+</html>
