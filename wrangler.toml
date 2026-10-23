@@ -12,7 +12,7 @@ run_worker_first = ["/api/*"]
 [[d1_databases]]
 binding = "DB"
 database_name = "yuhan-csr"
-database_id = "여기에-D1-데이터베이스-ID"
+database_id = "4420b436-9607-40ce-a6cb-4f78b375ed22"
 
 [[r2_buckets]]
 binding = "PHOTOS"
