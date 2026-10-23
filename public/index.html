@@ -414,7 +414,8 @@ body.is-admin::before{background:#F3F3EE}
 .sitechip[aria-pressed="true"]{background:var(--sc,var(--ink));border-color:var(--sc,var(--ink));color:#fff}
 .page .sitebar{margin:0 0 20px}
 .prow{grid-template-columns:140px minmax(0,1fr) auto}
-.prow .dt .site{display:inline-flex;margin:0 0 14px;color:#fff;font-family:var(--f-sans);font-weight:700;letter-spacing:.06em}
+.prow .dt-sites{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 14px}
+.prow .dt .site{display:inline-flex;margin:0;color:#fff;font-family:var(--f-sans);font-weight:700;letter-spacing:.06em}
 .ev{border-left:4px solid var(--sc,transparent)}
 .ev b{font-weight:700}
 .seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -602,10 +603,12 @@ const CATS=['본사','연구소','공장','전사'];
 const SITE_COLOR={'본사':'#5E6A3B','연구소':'#35566B','공장':'#8A6A1F','전사':'#B9522F'};
 const siteColor=c=>SITE_COLOR[c]||'#6B7062';
 const siteTag=(c,big)=>CATS.includes(c)?`<span class="site${big?' big':''}" style="--sc:${siteColor(c)}">${esc(c)}</span>`:'';
+const catsOf=x=>{const a=Array.isArray(x&&x.categories)?x.categories.filter(c=>CATS.includes(c)):[];return a.length?a:[x&&x.category]};
+const siteTags=(x,big)=>catsOf(x).map(c=>siteTag(c,big)).join('');
 function siteBar(cls){const f=S.siteF||'all',live=S.programs.filter(p=>state(p)==='open');
-  return `<div class="sitebar${cls?' '+cls:''}" role="group" aria-label="봉사 구분">${['all',...CATS].map(c=>{const n=c==='all'?live.length:live.filter(p=>p.category===c).length;
+  return `<div class="sitebar${cls?' '+cls:''}" role="group" aria-label="봉사 구분">${['all',...CATS].map(c=>{const n=c==='all'?live.length:live.filter(p=>catsOf(p).includes(c)).length;
     return `<button class="sitechip" data-act="siteF" data-site="${c}" aria-pressed="${f===c}"${c!=='all'?` style="--sc:${siteColor(c)}"`:''}>${c==='all'?'전체':c}<span>${n}</span></button>`}).join('')}</div>`}
-const bySite=x=>!S.siteF||S.siteF==='all'||x.category===S.siteF;
+const bySite=x=>!S.siteF||S.siteF==='all'||catsOf(x).includes(S.siteF);
 const WD='일월화수목금토';
 const S={programs:[],archive:[],signups:{},seats:{},votes:{},stories:[],ideas:[],lastPost:0,loaded:{},uid:null,admin:false,canWrite:null,
   db:null,user:null,assets:null,profiles:{},view:'home',applyId:null,cal:null,af:{year:'all',cat:'all'},offline:false};
@@ -736,7 +739,7 @@ function renderHome(){
   if(!S.loaded.programs&&!S.offline)h+='<div class="empty" style="margin-top:40px">모집 공고를 불러오는 중이에요</div>';
   else if(!open.length)h+=`<div class="empty" style="margin-top:40px"><b>${S.siteF&&S.siteF!=='all'?S.siteF+'에서 모집 중인 봉사가 없어요':'지금 모집 중인 봉사가 없어요'}</b></div>`;
   else h+=`<div class="rows">${open.slice(0,4).map((p,i)=>`<button class="prow rv${i?' d'+Math.min(i,3):''}" data-act="openApply" data-id="${esc(p.id)}">
-      <div class="dt">${siteTag(p.category,true)}<b>${pd(p.date).getDate()}</b><span>${pd(p.date).getMonth()+1}월 · ${wd(p.date)}요일</span></div>
+      <div class="dt"><span class="dt-sites">${siteTags(p,true)}</span><b>${pd(p.date).getDate()}</b><span>${pd(p.date).getMonth()+1}월 · ${wd(p.date)}요일</span></div>
       <div style="min-width:0"><div class="row" style="gap:8px">${dTag(p)}${p.sample?'<span class="pill ex">예시</span>':''}</div><h3>${esc(p.title)}</h3><p>${esc(p.place||'')}${p.time?' · '+esc(p.time):''}</p></div>
       <span class="go">신청하기 →</span></button>`).join('')}</div>`;
   $('#home-programs').innerHTML=h;
@@ -824,7 +827,7 @@ function renderCalendar(){
     <div class="calbar"><button class="btn sm" data-act="calPrev" aria-label="이전 달">←</button><b>${y}.${p2(m+1)}</b><button class="btn sm" data-act="calNext" aria-label="다음 달">→</button></div></div></div>
     <div class="cal">${[...WD].map(w=>`<div class="wh">${w}</div>`).join('')}${cells}</div>
     <div class="legend"><span><i style="background:var(--olive)"></i>모집 중</span><span><i style="background:var(--bone);box-shadow:inset 0 0 0 1px var(--rule)"></i>모집 마감</span><span><i style="background:var(--sage)"></i>지난 활동</span></div>
-    ${mEvs.length?`<div class="mlist">${mEvs.map(e=>`<button class="mrow" data-act="peek" data-kind="${e.kind}" data-id="${esc(e.id)}"><span class="num">${md(e.date)}<small>${wd(e.date)}요일</small></span><span style="min-width:0"><span class="row" style="gap:8px;margin-bottom:4px">${siteTag(e.o.category)}</span><b>${esc(e.title)}</b><span class="s">${esc(e.o.place||'')}</span></span>${e.kind==='p'?dTag(e.o):'<span class="pill">기록 보기</span>'}</button>`).join('')}</div>`
+    ${mEvs.length?`<div class="mlist">${mEvs.map(e=>`<button class="mrow" data-act="peek" data-kind="${e.kind}" data-id="${esc(e.id)}"><span class="num">${md(e.date)}<small>${wd(e.date)}요일</small></span><span style="min-width:0"><span class="row" style="gap:6px;margin-bottom:4px">${siteTags(e.o)}</span><b>${esc(e.title)}</b><span class="s">${esc(e.o.place||'')}</span></span>${e.kind==='p'?dTag(e.o):'<span class="pill">기록 보기</span>'}</button>`).join('')}</div>`
       :`<div class="empty" style="margin-top:28px">${m+1}월에는 등록된 일정이 없어요</div>`}
     ${S.admin?adminPast():''}</div>`;
 }
@@ -856,7 +859,7 @@ function peek(kind,id){
   if(kind==='a'){const a=getArch(id);if(a)archDetail(a);return}
   const p=getProg(id);if(!p)return;const st=state(p),n=countFor(p),cap=+p.capacity||0;
   openSheet('봉사 미리보기',`
-    <div class="row" style="gap:6px">${siteTag(p.category,true)}${dTag(p)}${p.sample?'<span class="pill ex">예시</span>':''}</div>
+    <div class="row" style="gap:6px">${siteTags(p,true)}${dTag(p)}${p.sample?'<span class="pill ex">예시</span>':''}</div>
     <div class="sh-title">${esc(p.title)}</div>
     <dl class="facts" style="margin:0"><dt>일시</dt><dd>${full(p.date)} ${esc(p.time||'')}</dd><dt>장소</dt><dd>${esc(p.place||'-')}</dd>${cap?`<dt>정원</dt><dd>${cap}명${n!=null?` · 현재 ${n}명 신청`:''}</dd>`:''}</dl>
     ${p.desc?`<p style="margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${esc(p.desc)}</p>`:''}
@@ -894,7 +897,7 @@ function renderApply(){
     <div class="apply">
       <div class="cover">${pic(p.cover,p.category,'',p.id)}</div>
       <div>
-        <div class="row" style="gap:6px">${siteTag(p.category,true)}${dTag(p)}${p.sample?'<span class="pill ex">예시</span>':''}</div>
+        <div class="row" style="gap:6px">${siteTags(p,true)}${dTag(p)}${p.sample?'<span class="pill ex">예시</span>':''}</div>
         <h1>${esc(p.title)}</h1>
         ${p.desc?`<p class="lead">${esc(p.desc)}</p>`:''}
         <dl class="facts"><dt>일시</dt><dd>${full(p.date)} ${esc(p.time||'')}</dd><dt>장소</dt><dd>${esc(p.place||'-')}</dd>

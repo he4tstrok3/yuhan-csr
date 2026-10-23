@@ -33,6 +33,7 @@ img{max-width:100%}
 .btn.danger{border-color:transparent;background:none;color:#A3322A}
 .btn.danger:hover{text-decoration:underline;background:none;color:#A3322A}
 
+.tags{display:inline-flex;gap:4px}
 .site{display:inline-flex;align-items:center;background:var(--sc,#6B7062);color:#fff;font-weight:700;font-size:12px;letter-spacing:.04em;padding:2px 9px;border-radius:4px;white-space:nowrap}
 .pill{display:inline-flex;font-size:12px;padding:1px 8px;border:1px dashed #B5B7A8;color:#7A7E70;border-radius:99px;margin-left:6px}
 
@@ -172,6 +173,8 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const img=k=>/^[a-f0-9]{32}$/.test(k||'')?'/api/img/'+k:'';
 const siteTag=c=>CATS.includes(c)?`<span class="site" style="--sc:${SITE_COLOR[c]}">${esc(c)}</span>`:'';
+const catsOf=x=>{const a=Array.isArray(x&&x.categories)?x.categories.filter(c=>CATS.includes(c)):[];return a.length?a:[x&&x.category]};
+const siteTags=x=>`<span class="tags">${catsOf(x).map(siteTag).join('')}</span>`;
 const todayKST=()=>new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
 const dayBefore=d=>new Date(new Date(d+'T00:00:00Z').getTime()-864e5).toISOString().slice(0,10);
 const WD='일월화수목금토';
@@ -264,16 +267,16 @@ function body(){
     ${c.stories?`<div class="alert"><b>승인을 기다리는 후기가 ${c.stories}개 있어요</b><span>승인하기 전에는 직원 화면에 보이지 않아요.</span><button class="btn sm" data-act="tab" data-tab="stories">후기 확인</button></div>`:''}
     ${ex?`<div class="alert"><b>예시 데이터 ${ex}건이 남아 있어요</b><span>실제 운영 전에 지워 주세요.</span><button class="btn sm" data-act="clearSamples">예시 지우기</button></div>`:''}
     <h2 class="h2">다가오는 봉사</h2>
-    ${table(['구분','활동','활동일','상태','신청 현황',''],up.slice(0,8).map(p=>{const s=stLabel(p);return `<tr class="click" data-act="editProg" data-id="${esc(p.id)}"><td>${siteTag(p.category)}</td><td><b>${esc(p.title)}</b>${sample(p)}</td><td class="num">${md(p.date)} (${wd(p.date)})</td><td><span class="st ${s[1]}">${s[0]}</span></td><td><div class="prog">${barOf(countFor(p),+p.capacity||0)}</div></td><td class="r">${p.applyMode!=='naver'?`<button class="btn sm" data-act="applicants" data-id="${esc(p.id)}">명단</button>`:'<span class="muted">네이버폼</span>'}</td></tr>`}),'예정된 봉사가 없어요. 오른쪽 위 ‘새 공고’로 등록해 주세요.')}
+    ${table(['구분','활동','활동일','상태','신청 현황',''],up.slice(0,8).map(p=>{const s=stLabel(p);return `<tr class="click" data-act="editProg" data-id="${esc(p.id)}"><td>${siteTags(p)}</td><td><b>${esc(p.title)}</b>${sample(p)}</td><td class="num">${md(p.date)} (${wd(p.date)})</td><td><span class="st ${s[1]}">${s[0]}</span></td><td><div class="prog">${barOf(countFor(p),+p.capacity||0)}</div></td><td class="r">${p.applyMode!=='naver'?`<button class="btn sm" data-act="applicants" data-id="${esc(p.id)}">명단</button>`:'<span class="muted">네이버폼</span>'}</td></tr>`}),'예정된 봉사가 없어요. 오른쪽 위 ‘새 공고’로 등록해 주세요.')}
     <h2 class="h2">최근 관리 기록</h2>
     ${logTable(d.logs.slice(0,6))}`;
   }
   if(t==='programs'){
-    const list=d.programs.filter(p=>(S.site==='all'||p.category===S.site)&&(S.status==='all'||state(p)===S.status)&&qMatch(p.title,p.place)).sort((a,b)=>a.date<b.date?1:-1);
+    const list=d.programs.filter(p=>(S.site==='all'||catsOf(p).includes(S.site))&&(S.status==='all'||state(p)===S.status)&&qMatch(p.title,p.place)).sort((a,b)=>a.date<b.date?1:-1);
     return head('봉사 공고',`전체 ${d.programs.length}건`,search('활동명·장소 검색')+siteSel()+
       `<select class="input" id="f-status" aria-label="상태">${[['all','모든 상태'],['open','모집 중'],['closed','마감'],['past','종료']].map(([k,l])=>`<option value="${k}"${S.status===k?' selected':''}>${l}</option>`).join('')}</select><button class="btn fill" data-act="newProg">새 공고</button>`)+
     table(['구분','활동','활동일','상태','신청 현황','신청 방법',''],list.map(p=>{const s=stLabel(p),site=p.applyMode!=='naver';
-      return `<tr class="click" data-act="editProg" data-id="${esc(p.id)}"><td>${siteTag(p.category)}</td><td><b>${esc(p.title)}</b>${sample(p)}<small>${esc(p.place||'')}</small></td><td class="num">${md(p.date)} (${wd(p.date)})</td><td><span class="st ${s[1]}">${s[0]}</span></td><td><div class="prog">${barOf(countFor(p),+p.capacity||0)}</div></td><td>${site?`사이트 · 문항 ${(p.questions||[]).length}`:'네이버폼'}</td>
+      return `<tr class="click" data-act="editProg" data-id="${esc(p.id)}"><td>${siteTags(p)}</td><td><b>${esc(p.title)}</b>${sample(p)}<small>${esc(p.place||'')}</small></td><td class="num">${md(p.date)} (${wd(p.date)})</td><td><span class="st ${s[1]}">${s[0]}</span></td><td><div class="prog">${barOf(countFor(p),+p.capacity||0)}</div></td><td>${site?`사이트 · 문항 ${(p.questions||[]).length}`:'네이버폼'}</td>
       <td class="r"><div class="acts">${site?`<button class="btn sm" data-act="applicants" data-id="${esc(p.id)}">명단</button>`:''}${state(p)==='past'?`<button class="btn sm" data-act="toArchive" data-id="${esc(p.id)}">기록으로</button>`:''}</div></td></tr>`}),S.q||S.site!=='all'||S.status!=='all'?'조건에 맞는 공고가 없어요':'등록된 공고가 없어요');
   }
   if(t==='archive'){
@@ -314,6 +317,11 @@ function logTable(logs){return table(['시각','작업','대상'],logs.map(l=>`<
 function openPanel(title,html){S.editing=true;$('#main').innerHTML=`<header class="head"><div><button class="back" data-act="back">← 목록으로</button><h1>${esc(title)}</h1></div></header>${html}`;window.scrollTo({top:0})}
 function closePanel(){S.editing=false;render()}
 const segSites=(name,cur)=>{cur=CATS.includes(cur)?cur:CATS[0];return `<fieldset class="field qset"><legend>구분</legend><div class="seg">${CATS.map(c=>`<label class="segopt" style="--sc:${SITE_COLOR[c]}"><input type="radio" name="${name}" value="${c}"${cur===c?' checked':''}><span>${c}</span></label>`).join('')}</div></fieldset>`};
+const segSitesMulti=(name,cur)=>{cur=(cur||[]).filter(c=>CATS.includes(c));if(!cur.length)cur=[CATS[0]];return `<fieldset class="field qset"><legend>사업장 <span class="hint">여러 곳 선택 가능 · 전사는 단독</span></legend><div class="seg" data-multi="${name}">${CATS.map(c=>`<label class="segopt" style="--sc:${SITE_COLOR[c]}"><input type="checkbox" name="${name}" value="${c}"${cur.includes(c)?' checked':''}><span>${c}</span></label>`).join('')}</div></fieldset>`};
+const pickSites=name=>{const v=[...document.querySelectorAll(`input[name="${name}"]:checked`)].map(x=>x.value).filter(c=>CATS.includes(c));return CATS.filter(c=>v.includes(c))};
+document.addEventListener('change',e=>{const t=e.target;if(!t.matches('[data-multi] input[type=checkbox]'))return;const all=[...t.closest('[data-multi]').querySelectorAll('input')];
+  if(t.checked){if(t.value==='전사')all.forEach(x=>{if(x!==t)x.checked=false});else all.forEach(x=>{if(x.value==='전사')x.checked=false})}
+  else if(!all.some(x=>x.checked))t.checked=true});
 const pickSite=name=>{const v=document.querySelector(`input[name="${name}"]:checked`)?.value;return CATS.includes(v)?v:CATS[0]};
 function thumbs(el,items,onRemove){el.replaceChildren(...items.map((src,i)=>{const f=document.createElement('figure');const im=document.createElement('img');im.src=src;im.alt='';const b=document.createElement('button');b.type='button';b.textContent='×';b.setAttribute('aria-label','사진 빼기');b.onclick=()=>onRemove(i);f.append(im,b);return f}))}
 
@@ -321,7 +329,7 @@ function progForm(p){
   p=p||{category:CATS[0],capacity:20,applyMode:'site',questions:[]};const id=p.id||newId();const editing=!!p.id;
   let cover=p.cover||'',file=null;const n=editing?signupsOf(p.id).length:0;
   openPanel(editing?'봉사 공고 수정':'새 봉사 공고',`<form class="card editor" id="pf" novalidate>
-    ${segSites('pf-site',p.category)}
+    ${segSitesMulti('pf-site',catsOf(p))}
     <div class="field"><label for="pf-title">활동명</label><input class="in" id="pf-title" required maxlength="60" value="${esc(p.title)}"></div>
     <fieldset class="field qset"><legend>신청 방법</legend><div class="row" style="gap:24px">
       <label class="check"><input type="radio" name="pf-mode" value="site"${p.applyMode!=='naver'?' checked':''}> 사이트에서 바로 신청받기</label>
@@ -372,7 +380,7 @@ function progForm(p){
       const few=questions.find(q=>(q.type==='choice'||q.type==='multi')&&q.options.length<2);if(few){toast(`‘${few.label}’에 선택지를 2개 이상 넣어 주세요`);return}}
     const btn=$('#pf-submit');btn.disabled=true;
     try{const up=file?(await uploadAll([file]))[0]:cover;const cnt=v('pf-cnt');
-      await api('/admin/programs/'+encodeURIComponent(id),{method:'PUT',body:{title:v('pf-title'),applyMode:mode,formUrl:mode==='naver'?v('pf-form'):'',questions,category:pickSite('pf-site'),date:v('pf-date'),time:v('pf-time'),place:v('pf-place'),meeting:v('pf-meet'),
+      await api('/admin/programs/'+encodeURIComponent(id),{method:'PUT',body:{title:v('pf-title'),applyMode:mode,formUrl:mode==='naver'?v('pf-form'):'',questions,categories:pickSites('pf-site'),category:pickSites('pf-site')[0]||CATS[0],date:v('pf-date'),time:v('pf-time'),place:v('pf-place'),meeting:v('pf-meet'),
         capacity:+v('pf-cap')||0,appliedCount:mode==='naver'&&cnt!==''?+cnt:null,deadline:v('pf-dl'),bring:v('pf-bring'),desc:v('pf-desc'),cover:up||'',status:$('#pf-closed')?.checked?'closed':'open',sample:false}});
       toast(editing?'저장했어요':'공고를 올렸어요');S.tab=S.tab==='dash'?'dash':'programs';await refresh()}
     catch(err){if(err.message!=='__silent')toast(failMsg(err));btn.disabled=false}};
@@ -408,7 +416,7 @@ function archForm(a,fromProg){
 const ansText=v=>Array.isArray(v)?v.join(', '):String(v??'');
 function applicantsView(p){
   const list=signupsOf(p.id),cap=+p.capacity||0,qs=p.questions||[];
-  openPanel(`신청자 · ${p.title}`,`<p style="margin:0 0 14px;color:var(--slate)">${siteTag(p.category)} ${md(p.date)} (${wd(p.date)}) · 신청 ${list.length}명${cap?` · 정원 ${cap} · 대기 ${Math.max(0,list.length-cap)}`:''}</p>
+  openPanel(`신청자 · ${p.title}`,`<p style="margin:0 0 14px;color:var(--slate)">${siteTags(p)} ${md(p.date)} (${wd(p.date)}) · 신청 ${list.length}명${cap?` · 정원 ${cap} · 대기 ${Math.max(0,list.length-cap)}`:''}</p>
     ${table(['#','이름','소속','사번','상태',...qs.map(q=>esc(q.label)),'신청 시각',''],list.map((a,i)=>`<tr><td class="num">${i+1}</td><td>${esc(a.name)}</td><td>${esc(a.org)}</td><td class="num">${esc(a.empNo)}</td><td><span class="st ${!cap||i<cap?'ok':'warn'}">${!cap||i<cap?'확정':'대기 '+(i-cap+1)}</span></td>${qs.map(q=>`<td class="wrap" style="min-width:140px">${esc(ansText(a.answers[q.id]))}</td>`).join('')}<td class="num muted">${fmtTime(a.at)}</td><td class="r"><button class="btn sm danger" data-act="delSignup" data-id="${esc(a.id)}" data-pid="${esc(p.id)}">삭제</button></td></tr>`),'아직 신청자가 없어요')}
     <div class="row" style="margin-top:14px;justify-content:flex-end">${list.length?`<button class="btn" data-act="csv" data-id="${esc(p.id)}">엑셀(CSV) 내려받기</button>`:''}<button class="btn quiet" data-act="back">목록으로</button></div>`);
 }
@@ -434,7 +442,7 @@ document.addEventListener('click',async e=>{
     case'applicants':{e.stopPropagation();const p=getProg(id);if(p)applicantsView(p);break}
     case'csv':{const p=getProg(id);if(p)downloadCsv(p);break}
     case'toArchive':{e.stopPropagation();const p=getProg(id);if(!p)break;const n=countFor(p)||0,cap=+p.capacity||0;
-      archForm({title:p.title,date:p.date,category:p.category,place:p.place,participants:cap?Math.min(n,cap):n,summary:'',photos:p.cover?[p.cover]:[]},id);break}
+      archForm({title:p.title,date:p.date,category:catsOf(p)[0],place:p.place,participants:cap?Math.min(n,cap):n,summary:'',photos:p.cover?[p.cover]:[]},id);break}
     case'delProg':{if(!confirmTap(b,'한 번 더 누르면 삭제 (신청자 명단도 지워져요)'))return;await api('/admin/programs/'+encodeURIComponent(id),{method:'DELETE'});toast('공고를 삭제했어요');await refresh();break}
     case'newArch':archForm();break;
     case'editArch':{const a=getArch(id);if(a)archForm(a);break}
