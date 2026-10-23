@@ -142,10 +142,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .step .btn{align-self:flex-start;margin-top:28px}
 .step-intro{min-height:48vh;justify-content:flex-start;opacity:1}
 .step-end{min-height:46vh;opacity:1}
+@supports (height:1svh){.stage{top:calc(72px + 6svh);height:calc(88svh - 72px)}.step{min-height:78svh}.step-intro{min-height:48svh}.step-end{min-height:46svh}}
 @media (max-width:860px){
   .scrolly{grid-template-columns:1fr;gap:0;padding-top:72px}
-  .stage{top:calc(72px + 12px);height:44vh;z-index:1;margin-bottom:8vh}
+  .stage{top:calc(72px + 12px);height:44vh;z-index:1;margin-bottom:8vh;background:var(--olive-d);padding-bottom:14px;box-shadow:0 -40px 0 var(--olive-d)}
   .step{min-height:64vh}
+  @supports (height:1svh){.stage{height:44svh;margin-bottom:8svh}.step{min-height:64svh}}
   .step-intro{min-height:auto;padding-bottom:40px}
 }
 
@@ -479,6 +481,8 @@ textarea.in{font-size:16px}
 .bgph img{position:absolute;left:0;top:-12%;width:100%;height:124%;object-fit:cover;display:block;will-change:transform}
 .bgch.photo .bgph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,38,24,.62),rgba(30,38,24,.74))}
 .bgch.photo{color:#F4F3EA;background:var(--olive-d)}
+/* touch devices: drop costly effects that make scrolling stutter */
+@media (hover:none),(max-width:860px){.top{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--bone)}.bgph img{top:0;height:100%;will-change:auto;transform:none!important}.hero-sym{will-change:auto}.layer{transform:none;transition:opacity .5s ease}.frame{transform:translateZ(0)}}
 .bgch.photo .manifesto em{color:#DCE3A8}
 .bgch.photo .quote .by,.bgch.photo .ch-sub{color:rgba(244,243,234,.85)}
 .bgch.photo .quote+.quote{border-top-color:rgba(255,255,255,.2)}
@@ -725,6 +729,7 @@ document.querySelector('.tabs').addEventListener('click',e=>{const t=e.target.cl
 
 /* ---------- home ---------- */
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const lightFx=matchMedia('(hover: none), (max-width: 860px)').matches;
 function renderHome(){
   const open=S.programs.filter(p=>state(p)==='open'&&bySite(p)).sort((a,b)=>a.date<b.date?-1:1);
   let h=siteBar('rv');
@@ -743,8 +748,9 @@ function renderHome(){
   observeReveal();
 }
 let curStep=-1;
-function syncSteps(){if(S.view!=='home')return;const steps=document.querySelectorAll('#steps .step[data-i]');if(!steps.length)return;
-  const mid=innerHeight*.5;let best=0,bd=Infinity;steps.forEach(el=>{const r=el.getBoundingClientRect(),d=Math.abs((r.top+r.bottom)/2-mid);if(d<bd){bd=d;best=+el.dataset.i}});
+let stepEls=[];
+function syncSteps(){if(S.view!=='home')return;if(!stepEls.length||!stepEls[0].isConnected)stepEls=[...document.querySelectorAll('#steps .step[data-i]')];const steps=stepEls;if(!steps.length)return;
+  const mid=innerHeight*.5;let best=0,bd=Infinity;for(const el of steps){const r=el.getBoundingClientRect();if(r.bottom<-innerHeight||r.top>innerHeight*2)continue;const d=Math.abs((r.top+r.bottom)/2-mid);if(d<bd){bd=d;best=+el.dataset.i}}
   if(best!==curStep){curStep=best;setStep(best,S._scA||[])}}
 function renderScrolly(){
   const A=S.archive.slice().sort((a,b)=>a.date<b.date?1:-1).slice(0,6);
@@ -765,7 +771,7 @@ function renderBgs(){const ph=S.archive.slice().sort((a,b)=>a.date<b.date?1:-1).
   const put=(id,pid)=>{const el=$('#'+id),ch=el&&el.parentElement;if(!el)return;const cur=el.dataset.pid||'';if(cur===(pid||''))return;el.dataset.pid=pid||'';
     el.innerHTML=pid?`<img src="${blob(pid)}" alt="">`:'';ch.classList.toggle('photo',!!pid)};
   put('bg-manifesto',ph[1]||ph[0]);put('bg-voices',ph[4]||ph[2]||ph[0])}
-function parallax(){if(reduceMotion||S.view!=='home')return;document.querySelectorAll('.bgph img').forEach(im=>{const r=im.parentElement.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;im.style.transform=`translateY(${(r.top+r.height/2-innerHeight/2)*-.12}px)`})}
+function parallax(){if(reduceMotion||lightFx||S.view!=='home')return;const ims=[...document.querySelectorAll('.bgph img')];const ys=ims.map(im=>{const r=im.parentElement.getBoundingClientRect();return r.bottom<0||r.top>innerHeight?null:(r.top+r.height/2-innerHeight/2)*-.12});ims.forEach((im,i)=>{if(ys[i]!=null)im.style.transform=`translateY(${ys[i].toFixed(1)}px)`})}
 function setStep(i,A){
   document.querySelectorAll('#frame .layer').forEach((l,k)=>l.classList.toggle('on',k===i));
   document.querySelectorAll('#steps .step[data-i]').forEach(s=>s.classList.toggle('on',+s.dataset.i===i));
@@ -778,12 +784,16 @@ function observeReveal(){
   if(!rvIO)rvIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.remove('pre');rvIO.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
   document.querySelectorAll('[data-panel]:not([hidden]) .rv:not(.seen)').forEach(el=>{el.classList.add('seen');if(el.getBoundingClientRect().top>innerHeight*.92){el.classList.add('pre');rvIO.observe(el)}});
 }
-let ticking=false;
+let ticking=false,docH=0,lastW=innerWidth;
+const measure=()=>{docH=document.documentElement.scrollHeight};
+if('ResizeObserver' in window)new ResizeObserver(measure).observe(document.body);
 addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;
-  const max=document.documentElement.scrollHeight-innerHeight;$('#progress').style.transform=`scaleX(${max>0?Math.min(1,scrollY/max):0})`;
-  if(S.view==='home'&&!reduceMotion&&scrollY<innerHeight*1.5)$('#hero-sym').style.transform=`translateY(${scrollY*.28}px) rotate(${scrollY*.015}deg)`;
-  syncSteps();parallax()})},{passive:true});
-addEventListener('resize',()=>{curStep=-1;syncSteps()});
+  const y=scrollY,vh=innerHeight;if(!docH)measure();
+  syncSteps();parallax();
+  const max=docH-vh;$('#progress').style.transform=`scaleX(${max>0?Math.min(1,y/max).toFixed(4):0})`;
+  if(S.view==='home'&&!reduceMotion&&!lightFx&&y<vh*1.5)$('#hero-sym').style.transform=`translateY(${(y*.28).toFixed(1)}px) rotate(${(y*.015).toFixed(2)}deg)`;
+})},{passive:true});
+addEventListener('resize',()=>{measure();if(innerWidth===lastW)return;lastW=innerWidth;curStep=-1;syncSteps()});
 function pcard(p,feature){const n=countFor(p),cap=+p.capacity||0;
   return `<button class="pcard${feature?' feature':''}" data-act="openApply" data-id="${esc(p.id)}">
     <div class="pimg">${dTag(p)}${pic(p.cover,p.category,'',p.id)}</div>
