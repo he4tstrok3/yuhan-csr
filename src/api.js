@@ -136,10 +136,17 @@ function cleanQuestions(qs) {
     options: (q.type === 'choice' || q.type === 'multi') && Array.isArray(q.options) ? q.options.slice(0, 10).map((o) => str(o, 40)).filter(Boolean) : [],
   })).filter((q) => q.label && !BANNED_Q.test(q.label));
 }
+function cleanSites(d) {
+  let cats = (Array.isArray(d.categories) ? d.categories : [d.category]).filter((c) => SITES.includes(c));
+  cats = SITES.filter((c) => cats.includes(c));
+  if (cats.includes('전사')) cats = ['전사'];
+  if (!cats.length) cats = [SITES[0]];
+  return { category: cats[0], categories: cats };
+}
 function cleanProgram(d) {
   const mode = d.applyMode === 'naver' ? 'naver' : 'site';
   const p = {
-    title: str(d.title, 60), category: SITES.includes(d.category) ? d.category : SITES[0],
+    title: str(d.title, 60), ...cleanSites(d),
     date: DATE_RE.test(d.date) ? d.date : '', deadline: DATE_RE.test(d.deadline) ? d.deadline : '',
     time: str(d.time, 30), place: str(d.place, 60), meeting: str(d.meeting, 60), bring: str(d.bring, 80), desc: str(d.desc, 800),
     capacity: Math.max(0, Math.min(10000, parseInt(d.capacity, 10) || 0)),
